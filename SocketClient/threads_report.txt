@@ -1,0 +1,43 @@
+"Thread-0@1029" prio=5 tid=0xe nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	  at java.io.FileInputStream.readBytes(FileInputStream.java:-1)
+	  at java.io.FileInputStream.read(FileInputStream.java:279)
+	  at java.io.BufferedInputStream.read1(BufferedInputStream.java:290)
+	  at java.io.BufferedInputStream.read(BufferedInputStream.java:351)
+	  - locked <0x28e> (a java.io.BufferedInputStream)
+	  at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:284)
+	  at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+	  at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:178)
+	  - locked <0x474> (a java.io.InputStreamReader)
+	  at java.io.InputStreamReader.read(InputStreamReader.java:181)
+	  at java.io.Reader.read(Reader.java:189)
+	  at java.util.Scanner.readInput(Scanner.java:882)
+	  at java.util.Scanner.findWithinHorizon(Scanner.java:1796)
+	  at java.util.Scanner.nextLine(Scanner.java:1649)
+	  at edu.school21.sockets.client.ServerWriter.sendMessage(ServerWriter.java:40)
+	  at edu.school21.sockets.client.ServerWriter.run(ServerWriter.java:32)
+
+"main@1" prio=5 tid=0x1 nid=NA waiting
+  java.lang.Thread.State: WAITING
+	 Incompatible thread state: thread not suspended
+
+"Reference Handler@1135" daemon prio=10 tid=0x2 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	 Incompatible thread state: thread not suspended
+
+"Finalizer@1136" daemon prio=8 tid=0x3 nid=NA waiting
+  java.lang.Thread.State: WAITING
+	 Incompatible thread state: thread not suspended
+
+"Signal Dispatcher@1137" daemon prio=9 tid=0x4 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	 Incompatible thread state: thread not suspended
+
+"Common-Cleaner@1138" daemon prio=8 tid=0xa nid=NA waiting
+  java.lang.Thread.State: WAITING
+	 Incompatible thread state: thread not suspended
+
+"Thread-1@1028" prio=5 tid=0xf nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	 Incompatible thread state: thread not suspended
+
