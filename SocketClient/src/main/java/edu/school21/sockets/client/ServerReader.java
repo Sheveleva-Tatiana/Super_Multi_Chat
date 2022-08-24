@@ -44,20 +44,29 @@ public class ServerReader extends Thread {
             String getJSON = reader.nextLine();
             JSONMessage jsonMessage = JSONConverter.parseToObject(getJSON);
             String message = jsonMessage.getMessage();
+            String users = jsonMessage.getUsers();
 
-            if ("Hello from Server!".equals(message) || "Authorization failed!".equals(message)) {
+            if ("Hello from Server!".equals(message) ||
+                    "Authorization failed!".equals(message) ||
+                    message.contains("Logout for") || message.contains("created!") ||
+                    message.contains("already exist")) {
                 mode.startProgram(message);
             }
 
-            if ("Authorization successful!".equals(message)) {
+            if ("1. Create room".equals(message)) {
                 mode.chooseRoom();
             }
+
             if (message.contains("Rooms: \n")) {
                 mode.listRooms(message);
             }
 
-            if ("Enter username: ".equals(message) || "Enter password: ".equals(message)) {
-                mode.registration(message);
+            if (message.contains("---")) {
+                mode.startTalk(message, users);
+            }
+
+            if ("Enter username: ".equals(message)) {
+                mode.registration();
                 serverWriter.isReadingThree = false;
             }
 
@@ -83,7 +92,6 @@ public class ServerReader extends Thread {
                 serverWriter.inRoom = true;
                 serverWriter.canFinish = false;
             }
-
             System.out.println(message);
         }
         if (serverWriter.active) {

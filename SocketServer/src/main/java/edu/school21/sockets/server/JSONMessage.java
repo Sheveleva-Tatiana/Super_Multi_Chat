@@ -5,11 +5,20 @@ import java.time.format.DateTimeFormatter;
 
 public class JSONMessage {
     private String messageJSON;
+    private String usersJSON;
     private LocalDateTime timeJSON;
 
     private static  final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
     public JSONMessage() {
+    }
+
+    public String getUsersJSON() {
+        return usersJSON;
+    }
+
+    public void setUsersJSON(String usersJSON) {
+        this.usersJSON = usersJSON;
     }
 
     public String getMessageJSON() {

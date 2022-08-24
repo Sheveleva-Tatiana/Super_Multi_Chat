@@ -12,10 +12,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class Server {
@@ -130,7 +128,7 @@ public class Server {
                             }
                         } else if ("".equals(message)) {
                             continue;
-                        } else if ("3".equals(message) || "exit".equals(message)) {
+                        } else if ("3".equals(message) || "exitProgram".equals(message)) {
                             exitChat();
                             return;
                         } else {
@@ -161,7 +159,7 @@ public class Server {
                             talk();
                         } else if ("2".equalsIgnoreCase(message)) {
                             chooseRoom();
-                        } else if ("3".equals(message) || "exit".equals(message)) {
+                        } else if ("3".equals(message) || "exitProgram".equals(message)) {
                             System.out.println("User: '" + username + "' logged out");
                             sendMsgToClient("Logout for " + username);
                             return;
@@ -190,9 +188,8 @@ public class Server {
             } else {
                 StringBuffer sb = new StringBuffer("Rooms: \n");
                 for (int i = 0; i < allRooms.size(); i++) {
-                    sb.append(i + 1 + ". " + allRooms.get(i).getTitle() + "\n");
+                    sb.append(allRooms.get(i).getTitle() + "\n");
                 }
-                sb.append(allRooms.size() + 1 + ". Exit");
                 sendMsgToClient(sb.toString());
             }
             while (true) {
@@ -243,7 +240,17 @@ public class Server {
         }
 
         private void sendMsgToClient(String text) {
-            writer.println(Objects.requireNonNull(JSONConverter.makeJSONObject(text)).toJSONString());
+            String users = null;
+            if (roomTitle != null)
+                users = takeUsers(roomTitle);
+            writer.println(Objects.requireNonNull(JSONConverter.makeJSONObject(text, users)).toJSONString());
+        }
+
+        private String takeUsers(String roomTitleCurrent) {
+            List<Client> users = clients.stream().filter(s -> roomTitle.equals(roomTitleCurrent)).collect(Collectors.toList());
+            StringJoiner str = new StringJoiner("\n");
+            users.forEach(s -> str.add(s.username));
+            return str.toString();
         }
 
         private void signUpUser() {
@@ -282,21 +289,29 @@ public class Server {
 
         private void showLastThirtyMessage(String title) {
             List<Message> allMessage = usersService.getAllMessageByTitle(title);
+            StringJoiner strToSend = new StringJoiner("\n");
             if (!allMessage.isEmpty()) {
                 for (Message msg : allMessage) {
-                    sendMsgToClient(msg.getAuthor() + ": " + msg.getMessage());
+                    strToSend.add(msg.getAuthor() + ": " + msg.getMessage());
                 }
+                sendMsgToClient(strToSend.toString());
+            } else {
+                sendMsgToClient("Please, write the first message in the room!");
             }
+
         }
         private void talk() {
             sendMsgToClient(roomTitle + "---");
             showLastThirtyMessage(roomTitle);
             while (true) {
                 String message = JSONConverter.parseToObject(reader.nextLine().trim()).getMessageJSON();
-                if ("exit".equals(message)) {
+                if ("exitChat".equals(message)) {
                     System.out.println(username + " left room: " + roomTitle);
                     sendMsgToClient("You have left the chat");
                     break;
+                }
+                if ("".equals(message)) {
+                    continue;
                 }
                 sendMessageToRoom(message, roomTitle, username);
             }

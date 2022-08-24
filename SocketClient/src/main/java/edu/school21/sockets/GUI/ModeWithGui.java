@@ -29,8 +29,8 @@ public class ModeWithGui {
         manage.init(msg);
     }
 
-    public void registration(String msg) {
-        manage.getNameAndPassword(msg);
+    public void registration() {
+        manage.getNameAndPassword();
     }
 
     public void chooseRoom() {
@@ -39,6 +39,11 @@ public class ModeWithGui {
 
     public void listRooms(String msg) {
         manage.showListRooms(msg);
+    }
+
+    public void startTalk(String msg, String users) {
+        manage.startTalking(msg, users);
+        manage.talking();
     }
 
 

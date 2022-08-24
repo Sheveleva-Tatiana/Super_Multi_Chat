@@ -28,7 +28,7 @@ public class ServerWriter extends Thread {
     @Override
     public void run() {
         try {
-            sendMessage();
+//            sendMessage();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

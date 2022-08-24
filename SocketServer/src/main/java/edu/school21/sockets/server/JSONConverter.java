@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class JSONConverter {
     private static final String TAG_MSG = "message";
+    private static final String TAG_USERS = "users";
     private static final String TAG_TIME = "time";
 
     public static JSONMessage parseToObject(String msg) {
@@ -17,6 +18,7 @@ public class JSONConverter {
         try {
             JSONObject messageObject = (JSONObject) parser.parse(msg);
             newMessage.setMessageJSON((String) messageObject.get(TAG_MSG));
+            newMessage.setUsersJSON((String) messageObject.get(TAG_USERS));
             String time = (String) messageObject.get(TAG_TIME);
             newMessage.setTimeJSON(LocalDateTime.parse(time));
         } catch (Exception e) {
@@ -25,10 +27,11 @@ public class JSONConverter {
         return newMessage;
     }
 
-    public static JSONObject makeJSONObject(String msg) {
+    public static JSONObject makeJSONObject(String msg, String users) {
         try {
             Map<String, String> mapMessage = new HashMap<>();
             mapMessage.put(TAG_MSG, msg);
+            mapMessage.put(TAG_USERS, users);
             mapMessage.put(TAG_TIME, LocalDateTime.now().toString());
             return new JSONObject(mapMessage);
         } catch (Exception e) {
