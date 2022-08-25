@@ -1,5 +1,7 @@
 package edu.school21.sockets.app;
 
+import edu.school21.sockets.GUI.ModeWithGui;
+import edu.school21.sockets.GUI.ViewGuiClient;
 import edu.school21.sockets.client.Client;
 
 import java.io.IOException;
@@ -8,7 +10,6 @@ import java.util.Scanner;
 public class Main {
     public static int port;
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         if (args.length != 1 || !args[0].startsWith("--server-port=")) {
             System.err.println("Specify the server port using --server-port=");
             System.exit(-1);
@@ -18,18 +19,12 @@ public class Main {
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }
+        toConnect();
+    }
+    public static void toConnect() {
         while (true) {
             newConnection();
-            System.out.println("To reconnect, enter \"start\" or \"exit\" for finish program");
-            String answer = scanner.nextLine();
-            while (!answer.equalsIgnoreCase("start")) {
-                if (answer.equalsIgnoreCase("exit")) {
-                    scanner.close();
-                    System.exit(0);
-                }
-                answer = scanner.nextLine();
-                continue;
-            }
+            ViewGuiClient.viewReconnect();
         }
     }
 
@@ -38,7 +33,7 @@ public class Main {
             Client client = new Client("127.0.0.1", port);
             client.start();
         } catch (Exception e) {
-            System.out.println("Failed to connect");
+            System.out.println(e.getMessage());
         }
     }
 }

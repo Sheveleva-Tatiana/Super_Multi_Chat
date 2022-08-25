@@ -4,6 +4,7 @@ import edu.school21.sockets.client.ServerReader;
 import edu.school21.sockets.client.ServerWriter;
 
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class ModeWithGui {
@@ -17,14 +18,6 @@ public class ModeWithGui {
         manage = new ViewGuiClient(reader, writer);
     }
 
-    public Scanner getReader() {
-        return reader;
-    }
-
-    public PrintWriter getWriter() {
-        return writer;
-    }
-
     public void startProgram(String msg) {
         manage.init(msg);
     }
@@ -33,8 +26,12 @@ public class ModeWithGui {
         manage.getNameAndPassword();
     }
 
-    public void chooseRoom() {
-        manage.choosingRoom();
+    public void chooseRoom(String message) {
+        manage.choosingCommand(message);
+    }
+
+    public void creatingRoom() {
+        manage.createNewRoom();
     }
 
     public void listRooms(String msg) {
@@ -43,8 +40,9 @@ public class ModeWithGui {
 
     public void startTalk(String msg, String users) {
         manage.startTalking(msg, users);
-        manage.talking();
     }
+
+    public void makeInvisibleFrames() {manage.makeInvisibleFrames();}
 
 
 }

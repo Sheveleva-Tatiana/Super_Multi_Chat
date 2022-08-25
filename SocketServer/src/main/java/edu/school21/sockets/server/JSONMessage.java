@@ -7,11 +7,21 @@ public class JSONMessage {
     private String messageJSON;
     private String usersJSON;
     private LocalDateTime timeJSON;
-
+    private String code;
     private static  final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
     public JSONMessage() {
     }
+
+    public String getCODE() {
+        return code;
+    }
+
+    public void setCODE(String code) {
+        this.code = code;
+    }
+
+
 
     public String getUsersJSON() {
         return usersJSON;

@@ -44,59 +44,26 @@ public class ServerReader extends Thread {
             String getJSON = reader.nextLine();
             JSONMessage jsonMessage = JSONConverter.parseToObject(getJSON);
             String message = jsonMessage.getMessage();
+            String code = jsonMessage.getCode();
             String users = jsonMessage.getUsers();
 
-            if ("Hello from Server!".equals(message) ||
-                    "Authorization failed!".equals(message) ||
-                    message.contains("Logout for") || message.contains("created!") ||
-                    message.contains("already exist")) {
+            if ("start".equalsIgnoreCase(code)) {
                 mode.startProgram(message);
-            }
-
-            if ("1. Create room".equals(message)) {
-                mode.chooseRoom();
-            }
-
-            if (message.contains("Rooms: \n")) {
-                mode.listRooms(message);
-            }
-
-            if (message.contains("---")) {
-                mode.startTalk(message, users);
-            }
-
-            if ("Enter username: ".equals(message)) {
+            } else if ("enterUserName".equalsIgnoreCase(code)) {
                 mode.registration();
-                serverWriter.isReadingThree = false;
+            } else if ("choose command".equalsIgnoreCase(code)) {
+                mode.chooseRoom(message);
+            } else if ("enterTitleRoom".equalsIgnoreCase(code)) {
+                mode.creatingRoom();
+            } else if ("showAllRooms".equalsIgnoreCase(code)) {
+                mode.listRooms(message);
+            } else if ("history messages".equalsIgnoreCase(code)) {
+                mode.startTalk(message, users);
+            } else if ("EXIT".equals(code)) {
+                Client.close(writer, reader, socket, 0);
             }
-
-            if ("Choose command:".equals(message)) {
-                serverWriter.canFinish = true;
-            }
-            if ("1. Create room".equals(message)) {
-                serverWriter.canFinish = false;
-            }
-            if ("Authorization failed!".equals(message) || "Authorization successful!".equals(message) ||
-                    message.contains("already exist") || "1. Create room".equals(message) || message.contains("created!")) {
-                serverWriter.isReadingThree = true;
-            }
-            if ("You have left the chat".equals(message)) {
-                serverWriter.inRoom = false;
-                serverWriter.canFinish = false;
-            }
-            if (message.contains("Rooms:") || message.contains("---")) {
-                serverWriter.isReadingThree = false;
-                serverWriter.canFinish = false;
-            }
-            if (message.contains("---")) {
-                serverWriter.inRoom = true;
-                serverWriter.canFinish = false;
-            }
-            System.out.println(message);
         }
-        if (serverWriter.active) {
-            serverWriter.active = false;
-            Client.close(writer, reader, socket, -1);
-        }
+        mode.makeInvisibleFrames();
     }
+
 }

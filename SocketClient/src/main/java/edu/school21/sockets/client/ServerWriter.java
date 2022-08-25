@@ -37,7 +37,7 @@ public class ServerWriter extends Thread {
     private void sendMessage() throws IOException, InterruptedException {
         while (active) {
             String toSendMessage = scanner.nextLine();
-            JSONObject messageJSON = JSONConverter.makeJSONObject(toSendMessage);
+            JSONObject messageJSON = JSONConverter.makeJSONObject(toSendMessage, "ok");
             String message = messageJSON.toJSONString();
             if (("exit".equals(toSendMessage) && !inRoom && canFinish) ||
                     ("3".equals(toSendMessage) && isReadingThree && canFinish)) {
