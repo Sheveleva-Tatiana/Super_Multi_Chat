@@ -24,6 +24,7 @@ public class RoomsRepositoryImpl implements RoomsRepository {
 
     private void init() {
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS server;");
+//        jdbcTemplate.execute("DROP  TABLE server.rooms;");
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS server.rooms (\n" +
                 "id serial primary key,\n" +
                 "title varchar(40) not null unique, \n" +

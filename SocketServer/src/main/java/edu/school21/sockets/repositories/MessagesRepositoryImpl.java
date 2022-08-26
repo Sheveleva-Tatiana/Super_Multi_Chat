@@ -30,6 +30,7 @@ public class MessagesRepositoryImpl implements MessagesRepository {
 
     private void init() {
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS server;");
+//        jdbcTemplate.execute("DROP  TABLE server.message;");
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS server.message (\n" +
                 "message text not null,\n" +
                 "author varchar(100) not null,\n" +
@@ -89,7 +90,7 @@ public class MessagesRepositoryImpl implements MessagesRepository {
                     "select * from t order by time asc";
             message = jdbcTemplate.query(usQuery, new BeanPropertyRowMapper<>(Message.class));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            return new ArrayList<>();
         }
         return message;
     }

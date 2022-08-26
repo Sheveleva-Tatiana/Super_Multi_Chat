@@ -24,6 +24,7 @@ public class UsersRepositoryImpl implements UsersRepository {
 
     private void init() {
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS server;");
+//        jdbcTemplate.execute("DROP  TABLE server.user;");
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS server.user (\n" +
                 "id serial primary key,\n" +
                 "username varchar(40) not null unique,\n" +

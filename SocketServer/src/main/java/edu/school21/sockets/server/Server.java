@@ -68,11 +68,19 @@ public class Server {
         }
     }
 
-    private synchronized void sendMessageToRoom(String message, String roomTitles, String senderName) {
-        usersService.createMessage(message, senderName, roomTitles);
+    private synchronized void sendMessageToRoom(String message, String roomTitles, String senderName, boolean saveMessage) {
+        String messageToSend;
+
+        if (saveMessage) {
+            usersService.createMessage(message, senderName, roomTitles);
+            messageToSend = "[" + LocalDateTime.now().format(FORMATTER) + "] " + senderName + ": "
+                    + message;
+        } else {
+            messageToSend = message;
+        }
+
         clients.stream().filter(title -> Objects.equals(title.roomTitle, roomTitles)).
-                forEach(c -> c.sendMsgToClient("[" + LocalDateTime.now().format(FORMATTER) + "] "
-                                                + senderName + ": " + message, "talking"));
+                forEach(c -> c.sendMsgToClientWithRoom(messageToSend, "talking", roomTitles));
     }
 
     private void removeClient(Client client) {
@@ -100,6 +108,7 @@ public class Server {
         private Socket socket;
         private String username = "guest";
         private String roomTitle;
+        private String users;
         private String password;
 
         Client(Socket socket) {
@@ -190,17 +199,21 @@ public class Server {
         }
 
         private String takeUsers(String roomTitleCurrent) {
-            List<Client> users = clients.stream().filter(s -> roomTitle.equals(roomTitleCurrent)).collect(Collectors.toList());
+            List<Client> users = clients.stream().filter(s -> s.roomTitle.equals(roomTitleCurrent)).collect(Collectors.toList());
             StringJoiner str = new StringJoiner("\n");
             users.forEach(s -> str.add(s.username));
             return str.toString();
         }
 
-        private void sendMsgToClient(String text, String code) {
+        private void sendMsgToClientWithRoom(String text, String code, String needRoomTitle) {
             String users = null;
             if (roomTitle != null)
-                users = takeUsers(roomTitle);
+                users = takeUsers(needRoomTitle);
             writer.println(Objects.requireNonNull(JSONConverter.makeJSONObject(text, users, code)).toJSONString());
+        }
+
+        private void sendMsgToClient(String text, String code) {
+            writer.println(Objects.requireNonNull(JSONConverter.makeJSONObject(text, "users", code)).toJSONString());
         }
 
         private void chooseOrCreateRoom() {
@@ -208,7 +221,6 @@ public class Server {
                 try {
                     if (reader.hasNextLine()) {
                         String code = JSONConverter.parseToObject(reader.nextLine().trim()).getCODE();
-
                         if ("answer1".equalsIgnoreCase(code)) {
                             createRoom();
                         } else if ("answer2".equalsIgnoreCase(code)) {
@@ -259,23 +271,22 @@ public class Server {
                 }
                 sendMsgToClient(sb.toString(), "showAllRooms");
             }
-            while (true) {
-                try {
-                    JSONMessage messageJson = JSONConverter.parseToObject(reader.nextLine().trim());
-                    numberRoom = Integer.parseInt(messageJson.getMessageJSON());
-                    String code = messageJson.getCODE();
-                    if ("back".equals(code)) {
-                        sendMsgToClient("Choose command: ", "choose command");
-                        return;
-                    }
-                    roomTitle = allRooms.get(numberRoom - 1).getTitle();
-                    System.out.println("User '" + username + "' in room: '" + roomTitle + "'");
-                    talk();
-                } catch (NoSuchElementException e) {
-                    return;
-                } catch (Exception e) {
-                    sendMsgToClient("Something went wrong", "ERROR");
+            try {
+                JSONMessage messageJson = JSONConverter.parseToObject(reader.nextLine().trim());
+                numberRoom = Integer.parseInt(messageJson.getMessageJSON());
+                String code = messageJson.getCODE();
+                if ("back".equals(code)) {
+                   sendMsgToClient("Choose command: ", "choose command");
+                   return;
                 }
+                roomTitle = allRooms.get(numberRoom - 1).getTitle();
+                System.out.println("User '" + username + "' in room: '" + roomTitle + "'");
+                talk();
+                sendMsgToClient("You have left the room" , "choose command");
+            } catch (NoSuchElementException e) {
+                return;
+            } catch (Exception e) {
+                sendMsgToClient("Something went wrong", "ERROR");
             }
         }
 
@@ -286,25 +297,28 @@ public class Server {
                 for (Message msg : allMessage) {
                     strToSend.add("[" + msg.getTime().format(FORMATTER) + "] " + msg.getAuthor() + ": " + msg.getMessage());
                 }
-                sendMsgToClient(strToSend.toString(), "history messages");
+                sendMsgToClientWithRoom(strToSend.toString(), "history messages", title);
             } else {
-                sendMsgToClient("Please, write the first message in the room!", "history messages");
+                sendMsgToClientWithRoom("Please, write the first message in the room!", "history messages", title);
             }
         }
 
         private void talk() {
             showLastThirtyMessage(roomTitle);
-            sendMsgToClient("", "isTalking");
+            sendMessageToRoom(username + " joined the chat", roomTitle, username, false);
             while (true) {
                 JSONMessage messageJson = JSONConverter.parseToObject(reader.nextLine().trim());
                 String message = messageJson.getMessageJSON();
                 String code = messageJson.getCODE();
                 if ("back".equals(code)) {
-                    System.out.println(username + " left room: " + roomTitle);
-                    sendMsgToClient("You have left the room: " +  roomTitle, "choose command");
+                    String saveTitle = roomTitle;
+                    roomTitle = "";
+                    System.out.println(username + " left room: " + saveTitle);
+                    sendMessageToRoom(username + " have left the room", saveTitle, username, false);
+                    sendMsgToClient("You have left the room: " +  saveTitle, "choose command");
                     return;
                 }
-                sendMessageToRoom(message, roomTitle, username);
+                sendMessageToRoom(message, roomTitle, username, true);
             }
         }
 
