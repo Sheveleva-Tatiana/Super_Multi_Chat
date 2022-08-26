@@ -3,5 +3,8 @@
 
 Демонстрация работы чаты по ссылке https://youtu.be/u-wSoWaoalQ
 
-https://user-images.githubusercontent.com/94602550/185937635-861e5438-f7e8-4a8b-84b3-8ca2984eb5b5.mov
+
+
+
+https://user-images.githubusercontent.com/94602550/186909167-ae87c5ac-4a32-4053-8661-ead7bcbbbde1.mov
 
