@@ -7,8 +7,12 @@ import java.awt.*;
 
 public class ReconnectWindow extends AWindow{
 
-    private JButton buttonStart, buttonExit;
+    private JButton buttonStart;
+    private JButton buttonExit;
+    private JButton buttonEdit;
     private JFrame frame;
+    private boolean isEdit = false;
+
 
 
     public ReconnectWindow(JFrame frame, int width, int height) {
@@ -38,8 +42,10 @@ public class ReconnectWindow extends AWindow{
         JPanel panelForButton = new JPanel();
         panelForButton.setLayout(new GridLayout(1, 2));
         buttonStart = new JButton("Start");
+        buttonEdit = new JButton("Edit");
         buttonExit = new JButton("Exit");
         panelForButton.add(buttonStart);
+        panelForButton.add(buttonEdit);
         panelForButton.add(buttonExit);
 
         main.add(panelForText);
@@ -58,7 +64,15 @@ public class ReconnectWindow extends AWindow{
         return buttonExit;
     }
 
+    public JButton getButtonEdit() {
+        return buttonEdit;
+    }
 
+    public void setEdit(boolean edit) {
+        isEdit = edit;
+    }
 
-
+    public boolean isEdit() {
+        return isEdit;
+    }
 }

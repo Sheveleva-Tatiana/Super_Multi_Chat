@@ -1,8 +1,5 @@
 package edu.school21.sockets.client;
 
-import edu.school21.sockets.GUI.ModeWithGui;
-import org.w3c.dom.ls.LSOutput;
-
 import javax.net.SocketFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,22 +17,16 @@ public class Client {
         writer = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public void start() throws InterruptedException, IOException {
-        ServerWriter serverWriter = new ServerWriter(writer, reader, socket);
-        ServerReader serverReader = new ServerReader(reader, writer, socket, serverWriter);
+    public void start() throws InterruptedException {
+        ServerReader serverReader = new ServerReader(reader, writer, socket);
         serverReader.start();
-        serverWriter.start();
         serverReader.join();
-        serverWriter.join();
     }
 
-    public synchronized static void close(PrintWriter writer,  Scanner reader, Socket socket, int flag) throws IOException {
+    public synchronized static void close(PrintWriter writer,  Scanner reader, Socket socket) throws IOException {
+        reader.close();
         writer.close();
         socket.close();
-        if (flag == -1) {
-            System.out.println("Server connection lost :(");
-            return;
-        }
-        System.exit(flag);
+        System.exit(0);
     }
 }

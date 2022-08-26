@@ -1,20 +1,12 @@
 package edu.school21.sockets.GUI;
 
-import edu.school21.sockets.client.ServerReader;
-import edu.school21.sockets.client.ServerWriter;
-
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class ModeWithGui {
-    private Scanner reader;
-    private PrintWriter writer;
     private ViewGuiClient manage;
 
     public ModeWithGui(Scanner reader, PrintWriter writer) {
-        this.reader = reader;
-        this.writer = writer;
         manage = new ViewGuiClient(reader, writer);
     }
 

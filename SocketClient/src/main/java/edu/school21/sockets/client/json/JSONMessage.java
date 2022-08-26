@@ -1,4 +1,4 @@
-package edu.school21.sockets.client;
+package edu.school21.sockets.client.json;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

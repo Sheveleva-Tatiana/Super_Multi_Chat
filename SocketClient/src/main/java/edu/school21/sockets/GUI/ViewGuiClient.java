@@ -1,8 +1,8 @@
 package edu.school21.sockets.GUI;
 
 import edu.school21.sockets.GUI.Windows.*;
-import edu.school21.sockets.client.JSONConverter;
-import edu.school21.sockets.client.JSONMessage;
+import edu.school21.sockets.client.json.JSONConverter;
+import edu.school21.sockets.client.json.JSONMessage;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -15,13 +15,24 @@ public class ViewGuiClient {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 300;
 
-    private static String nameFrame;
-    private static String messageToServer;
-    private static JPasswordField password = null;
-    private static JTextField textField = null;
+    private String nameFrame;
+    private String messageToServer;
+    private String room = "";
+    private JPasswordField password = null;
+    private JTextField textField = null;
 
-    private Scanner reader;
-    private PrintWriter writer;
+    public static int newPort = 8000;
+    public static String newHost = "127.0.0.1";
+
+    private StartWindow startWindow;
+    private RegistrationWindow registrationWindow;
+    private ChooseCmdWindow chooseCmdWindow;
+    private CreateNewRoomWindow createNewRoomWindow;
+    private ShowListRoomsWindow showListRoomsWindow;
+    private StartTalkWindow startTalkWindow;
+
+    private final Scanner reader;
+    private final PrintWriter writer;
 
     public ViewGuiClient(Scanner reader, PrintWriter writer) {
         this.reader = reader;
@@ -29,7 +40,7 @@ public class ViewGuiClient {
     }
 
     public void init(String msg){
-        StartWindow startWindow = new StartWindow(new JFrame("Chat"), WIDTH, HEIGHT, msg);
+        startWindow = new StartWindow(new JFrame("Chat"), WIDTH, HEIGHT, msg);
         JButton buttonSignUp = startWindow.getButtonSignUp();
         JButton buttonSignIn = startWindow.getButtonSignIn();
         JButton buttonExit = startWindow.getButtonExit();
@@ -71,7 +82,7 @@ public class ViewGuiClient {
     }
 
     public void getNameAndPassword() {
-        RegistrationWindow registrationWindow = new RegistrationWindow(new JFrame(nameFrame), WIDTH, 200);
+        registrationWindow = new RegistrationWindow(new JFrame(nameFrame), WIDTH, 200);
         JButton sendButton = registrationWindow.getBtnOk();
         JButton backButton = registrationWindow.getBtnCancel();
         textField = registrationWindow.getTfLogin();
@@ -122,7 +133,7 @@ public class ViewGuiClient {
     }
 
     public void choosingCommand(String msg) {
-        ChooseCmdWindow chooseCmdWindow = new ChooseCmdWindow(new JFrame("Chat"), WIDTH, HEIGHT, msg);
+        chooseCmdWindow = new ChooseCmdWindow(new JFrame("Chat"), WIDTH, HEIGHT, msg);
         JButton buttonCreate = chooseCmdWindow.getButtonCreate();
         JButton buttonChoose = chooseCmdWindow.getButtonChoose();
         JButton buttonExitd = chooseCmdWindow.getButtonExit();
@@ -130,7 +141,7 @@ public class ViewGuiClient {
         buttonCreate.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JSONObject messageJSON = JSONConverter.makeJSONObject("signUP", "answer1");
+                JSONObject messageJSON = JSONConverter.makeJSONObject("createRoom", "answer1");
                 assert messageJSON != null;
                 String message = messageJSON.toJSONString();
                 writer.println(message);
@@ -141,7 +152,7 @@ public class ViewGuiClient {
         buttonChoose.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JSONObject messageJSON = JSONConverter.makeJSONObject("signIn", "answer2");
+                JSONObject messageJSON = JSONConverter.makeJSONObject("chooseRoom", "answer2");
                 assert messageJSON != null;
                 String message = messageJSON.toJSONString();
                 writer.println(message);
@@ -162,7 +173,7 @@ public class ViewGuiClient {
     }
 
     public void createNewRoom() {
-        CreateNewRoomWindow createNewRoomWindow = new CreateNewRoomWindow(new JFrame("Creating a new room"), WIDTH, HEIGHT);
+        createNewRoomWindow = new CreateNewRoomWindow(new JFrame("Creating a new room"), WIDTH, HEIGHT);
 
         JButton sendButton = createNewRoomWindow.getSendButton();
         JButton backButton = createNewRoomWindow.getBackButton();
@@ -202,7 +213,7 @@ public class ViewGuiClient {
     }
 
     public void showListRooms(String msg) {
-        ShowListRoomsWindow showListRoomsWindow = new ShowListRoomsWindow(new JFrame("Chat"), WIDTH, HEIGHT, msg);
+        showListRoomsWindow = new ShowListRoomsWindow(new JFrame("Chat"), WIDTH, HEIGHT, msg);
         JComboBox box = showListRoomsWindow.getBox();
         JButton buttonOk = showListRoomsWindow.getButtonOk();
         JButton buttonBack = showListRoomsWindow.getButtonBack();
@@ -211,6 +222,7 @@ public class ViewGuiClient {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 String toSendMessage = String.valueOf(box.getSelectedIndex() + 1);
+                room = String.valueOf(box.getSelectedItem());
                 JSONObject messageJSON = JSONConverter.makeJSONObject(toSendMessage, "ok");
                 assert messageJSON != null;
                 messageToServer = messageJSON.toJSONString();
@@ -221,7 +233,7 @@ public class ViewGuiClient {
         buttonBack.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JSONObject messageJSON = JSONConverter.makeJSONObject("back", "back");
+                JSONObject messageJSON = JSONConverter.makeJSONObject("0", "back");
                 assert messageJSON != null;
                 messageToServer = messageJSON.toJSONString();
                 writer.println(messageToServer);
@@ -231,13 +243,38 @@ public class ViewGuiClient {
     }
 
     public void startTalking(String msg, String userList) {
-        StartTalkWindow startTalkWindow = new StartTalkWindow(new JFrame("Chat"), WIDTH * 2, HEIGHT * 2, msg, userList);
+        startTalkWindow = new StartTalkWindow(new JFrame("Chat"), WIDTH * 2, HEIGHT * 2, msg, userList, room);
         JTextArea messagesWindow = startTalkWindow.getMessagesWindow();
         JTextArea usersWindow = startTalkWindow.getUsersWindow();
         JTextField textFieldForTalk = startTalkWindow.getTextFieldForTalk();
         JButton buttonToSend = startTalkWindow.getButtonToSend();
         JButton buttonToLeave = startTalkWindow.getButtonToLeave();
 
+        buttonToSend.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String toSendMessage = textFieldForTalk.getText();
+                if (!toSendMessage.equals("")) {
+                    JSONObject messageJSON = JSONConverter.makeJSONObject(toSendMessage, "msg");
+                    assert messageJSON != null;
+                    messageToServer = messageJSON.toJSONString();
+                    textFieldForTalk.setText(null);
+                    writer.println(messageToServer);
+                }
+            }
+        });
+        buttonToLeave.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JSONObject messageJSON = JSONConverter.makeJSONObject("0", "back");
+                assert messageJSON != null;
+                messageToServer = messageJSON.toJSONString();
+                textFieldForTalk.setText(null);
+                startTalkWindow.setVisible(false);
+                room = "";
+                writer.println(messageToServer);
+            }
+        });
         while(startTalkWindow.isVisible()) {
             try {
                 String getJSON = reader.nextLine();
@@ -246,45 +283,55 @@ public class ViewGuiClient {
                 String users = jsonMessage.getUsers();
                 messagesWindow.append(message + "\n");
                 usersWindow.setText(users);
-                buttonToSend.addActionListener(new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        String toSendMessage = textFieldForTalk.getText();
-                        if (!toSendMessage.equals("")) {
-                            JSONObject messageJSON = JSONConverter.makeJSONObject(toSendMessage, "msg");
-                            assert messageJSON != null;
-                            messageToServer = messageJSON.toJSONString();
-                            textFieldForTalk.setText(null);
-                            writer.println(messageToServer);
-                        }
-                    }
-                });
-                buttonToLeave.addActionListener(new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        JSONObject messageJSON = JSONConverter.makeJSONObject("0", "back");
-                        assert messageJSON != null;
-                        messageToServer = messageJSON.toJSONString();
-                        textFieldForTalk.setText(null);
-                        startTalkWindow.setVisible(false);
-                        writer.println(messageToServer);
-                    }
-                });
             } catch (NoSuchElementException e) {
                 break;
             }
         }
     }
 
+    public void makeInvisibleFrames() {
+        if (startWindow != null)
+            startWindow.setVisible(false);
+
+        if (registrationWindow != null)
+            registrationWindow.setVisible(false);
+
+        if (chooseCmdWindow != null)
+            chooseCmdWindow.setVisible(false);
+
+        if (createNewRoomWindow != null)
+            createNewRoomWindow.setVisible(false);
+
+        if (showListRoomsWindow != null)
+            showListRoomsWindow.setVisible(false);
+
+        if (startTalkWindow != null)
+            startTalkWindow.setVisible(false);
+    }
+
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     *                                  STATIC METHODS FOR RECONNECT FROM MAIN
+    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     public static void viewReconnect() {
         ReconnectWindow reconnectWindow = new ReconnectWindow(new JFrame("Connection is lost"), WIDTH, HEIGHT);
         JButton buttonStart = reconnectWindow.getButtonStart();
         JButton buttonExit = reconnectWindow.getButtonExit();
+        JButton buttonEdit = reconnectWindow.getButtonEdit();
 
         while (reconnectWindow.isVisible()) {
             buttonStart.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
+                    reconnectWindow.setVisible(false);
+                }
+            });
+
+            buttonEdit.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    reconnectWindow.setEdit(true);
                     reconnectWindow.setVisible(false);
                 }
             });
@@ -296,14 +343,33 @@ public class ViewGuiClient {
                 }
             });
         }
+        if (reconnectWindow.isEdit()) {
+            createConfiguration();
+        }
     }
 
-    public void makeInvisibleFrames() {
-//        if (framePassword != null)
-//            framePassword.setVisible(false);
-//        if (frame != null)
-//            frame.setVisible(false);
-//        if (frameForTalk != null)
-//            frameForTalk.setVisible(false);
+    private static void createConfiguration() {
+        EditConfigurationWindow edit = new EditConfigurationWindow(new JFrame("Configuration"), 500, 250);
+        JTextField textHost = edit.getTextHost();
+        JTextField textPort = edit.getTextPort();
+        JButton buttonOk = edit.getButtonOk();
+
+        while(edit.isVisible()) {
+            buttonOk.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    try {
+                        newPort = Integer.parseInt(textPort.getText());
+                        newHost = textHost.getText();
+                    } catch (Exception e) {
+                        newPort = 8000;
+                        newHost = "\"127.0.0.1\"";
+                    }
+                    edit.setVisible(false);
+                }
+            });
+        }
     }
+
+
 }

@@ -1,4 +1,4 @@
-package edu.school21.sockets.client;
+package edu.school21.sockets.client.json;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

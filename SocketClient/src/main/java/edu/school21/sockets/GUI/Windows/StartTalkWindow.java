@@ -14,21 +14,36 @@ public class StartTalkWindow extends AWindow{
     private JTextField textFieldForTalk;
     private JButton buttonToSend, buttonToLeave;
 
-    public StartTalkWindow(JFrame frame, int width, int height, String msg, String userList) {
+    public StartTalkWindow(JFrame frame, int width, int height, String msg, String userList, String room) {
         super(frame, width, height);
         this.frame = frame;
-        frame.getContentPane().add(init(msg, userList));
+        frame.getContentPane().add(init(msg, userList, room));
         frame.setVisible(true);
     }
 
-    private JPanel init(String msg, String userList) {
+    private JPanel init(String msg, String userList, String room) {
         JPanel main = BoxLayoutUtils.createVerticalPanel();
 
         JPanel panelForInfo = new JPanel();
         messagesWindow = new JTextArea(30, 70);
         usersWindow = new JTextArea(30, 25);
-        panelForInfo.add(new JScrollPane(messagesWindow), BorderLayout.CENTER);
-        panelForInfo.add(new JScrollPane(usersWindow), BorderLayout.EAST);
+
+        JPanel panelForMessages = BoxLayoutUtils.createVerticalPanel();
+        JScrollPane scrollPaneMessage = new JScrollPane(messagesWindow);
+        scrollPaneMessage.getVerticalScrollBar().setValue(messagesWindow.getLineCount());
+
+        panelForMessages.add(new JButton(room));
+        panelForMessages.add(scrollPaneMessage);
+
+
+        JPanel panelForUsers = BoxLayoutUtils.createVerticalPanel();
+        JScrollPane scrollPaneUsers = new JScrollPane(usersWindow);
+        scrollPaneUsers.getVerticalScrollBar().setValue(usersWindow.getLineCount());
+        panelForUsers.add(new JButton("Users in the room: "));
+        panelForUsers.add(scrollPaneUsers);
+
+        panelForInfo.add(panelForMessages, BorderLayout.CENTER);
+        panelForInfo.add(panelForUsers, BorderLayout.EAST);
 
         JPanel panelForCommunicate = BoxLayoutUtils.createHorizontalPanel();
         JPanel panelForInput = BoxLayoutUtils.createVerticalPanel();
@@ -75,5 +90,5 @@ public class StartTalkWindow extends AWindow{
         return buttonToLeave;
     }
 
-
 }
+

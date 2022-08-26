@@ -1,16 +1,12 @@
 package edu.school21.sockets.client;
 
 import edu.school21.sockets.GUI.ModeWithGui;
-import edu.school21.sockets.GUI.ViewGuiClient;
-import edu.school21.sockets.app.Main;
-import org.w3c.dom.ls.LSOutput;
+import edu.school21.sockets.client.json.JSONConverter;
+import edu.school21.sockets.client.json.JSONMessage;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.Socket;
-import java.sql.SQLOutput;
-import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class ServerReader extends Thread {
@@ -18,11 +14,9 @@ public class ServerReader extends Thread {
     private Socket socket;
     private  PrintWriter writer;
     private ModeWithGui mode;
-    ServerWriter serverWriter;
 
-    public ServerReader(Scanner reader, PrintWriter writer, Socket socket, ServerWriter serverWriter) {
+    public ServerReader(Scanner reader, PrintWriter writer, Socket socket) {
         this.reader = reader;
-        this.serverWriter = serverWriter;
         this.writer = writer;
         this.socket = socket;
         mode = new ModeWithGui(reader, writer);
@@ -60,7 +54,7 @@ public class ServerReader extends Thread {
             } else if ("history messages".equalsIgnoreCase(code)) {
                 mode.startTalk(message, users);
             } else if ("EXIT".equals(code)) {
-                Client.close(writer, reader, socket, 0);
+                Client.close(writer, reader, socket);
             }
         }
         mode.makeInvisibleFrames();
