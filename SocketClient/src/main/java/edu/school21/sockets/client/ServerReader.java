@@ -46,12 +46,14 @@ public class ServerReader extends Thread {
             } else if ("enterUserName".equalsIgnoreCase(code)) {
                 mode.registration();
             } else if ("choose command".equalsIgnoreCase(code)) {
-                mode.chooseRoom(message);
+                mode.chooseCommand(message);
             } else if ("enterTitleRoom".equalsIgnoreCase(code)) {
                 mode.creatingRoom();
             } else if ("showAllRooms".equalsIgnoreCase(code)) {
                 mode.listRooms(message);
-            } else if ("history messages".equalsIgnoreCase(code)) {
+            } else if ("sure".equalsIgnoreCase(code)) {
+                mode.confirmDeletion();
+            }else if ("history messages".equalsIgnoreCase(code)) {
                 mode.startTalk(message, users);
             } else if ("EXIT".equals(code)) {
                 Client.close(writer, reader, socket);

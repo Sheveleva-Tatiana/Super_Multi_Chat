@@ -18,7 +18,7 @@ public class ModeWithGui {
         manage.getNameAndPassword();
     }
 
-    public void chooseRoom(String message) {
+    public void chooseCommand(String message) {
         manage.choosingCommand(message);
     }
 
@@ -37,4 +37,7 @@ public class ModeWithGui {
     public void makeInvisibleFrames() {manage.makeInvisibleFrames();}
 
 
+    public void confirmDeletion() {
+        manage.confirmDeletionGUI();
+    }
 }

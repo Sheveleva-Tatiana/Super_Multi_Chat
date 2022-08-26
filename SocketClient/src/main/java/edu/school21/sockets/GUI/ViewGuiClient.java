@@ -30,6 +30,7 @@ public class ViewGuiClient {
     private CreateNewRoomWindow createNewRoomWindow;
     private ShowListRoomsWindow showListRoomsWindow;
     private StartTalkWindow startTalkWindow;
+    private SureWindow sureWindow;
 
     private final Scanner reader;
     private final PrintWriter writer;
@@ -137,6 +138,7 @@ public class ViewGuiClient {
         JButton buttonCreate = chooseCmdWindow.getButtonCreate();
         JButton buttonChoose = chooseCmdWindow.getButtonChoose();
         JButton buttonExitd = chooseCmdWindow.getButtonExit();
+        JButton buttonDelete = chooseCmdWindow.getButtonDelete();
 
         buttonCreate.addActionListener(new AbstractAction() {
             @Override
@@ -159,6 +161,17 @@ public class ViewGuiClient {
                 chooseCmdWindow.setVisible(false);
             }
         });
+        buttonDelete.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JSONObject messageJSON = JSONConverter.makeJSONObject("delete", "answer3");
+                assert messageJSON != null;
+                String message = messageJSON.toJSONString();
+                writer.println(message);
+                chooseCmdWindow.setVisible(false);
+            }
+        });
+
 
         buttonExitd.addActionListener(new AbstractAction() {
             @Override
@@ -289,6 +302,34 @@ public class ViewGuiClient {
         }
     }
 
+    public void confirmDeletionGUI() {
+        sureWindow = new SureWindow(new JFrame("Confirm the decision"), 300, 150);
+        JButton buttonYes = sureWindow.getButtonYes();
+        JButton buttonNo = sureWindow.getButtonNo();
+
+        buttonYes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JSONObject messageJSON = JSONConverter.makeJSONObject("yes", "yes");
+                assert messageJSON != null;
+                messageToServer = messageJSON.toJSONString();
+                sureWindow.setVisible(false);
+                writer.println(messageToServer);
+            }
+        });
+        buttonNo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JSONObject messageJSON = JSONConverter.makeJSONObject("no", "no");
+                assert messageJSON != null;
+                messageToServer = messageJSON.toJSONString();
+                sureWindow.setVisible(false);
+                writer.println(messageToServer);
+            }
+        });
+
+    }
+
     public void makeInvisibleFrames() {
         if (startWindow != null)
             startWindow.setVisible(false);
@@ -370,6 +411,7 @@ public class ViewGuiClient {
             });
         }
     }
+
 
 
 }

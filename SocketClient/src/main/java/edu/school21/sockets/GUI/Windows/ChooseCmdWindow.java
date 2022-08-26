@@ -9,6 +9,10 @@ public class ChooseCmdWindow extends AWindow {
     private JButton buttonChoose;
     private JButton buttonExit;
 
+
+
+    private JButton buttonDelete;
+
     public ChooseCmdWindow(JFrame frame, int width, int height, String msg) {
         super(frame, width, height);
         this.frame = frame;
@@ -21,12 +25,14 @@ public class ChooseCmdWindow extends AWindow {
         JLabel label = new JLabel(msg);
         mainPanel.add(label);
         label.setHorizontalAlignment(JLabel.CENTER);
-        mainPanel.setLayout(new GridLayout(4,1));
-        buttonCreate = new JButton("1. Create room");
-        buttonChoose = new JButton("2. Choose room");
-        buttonExit = new JButton("3. Logout");
+        mainPanel.setLayout(new GridLayout(5,1));
+        buttonCreate = new JButton("Create room");
+        buttonChoose = new JButton("Choose room");
+        buttonDelete = new JButton("Delete profile");
+        buttonExit = new JButton("Logout");
         mainPanel.add(buttonCreate);
         mainPanel.add(buttonChoose);
+        mainPanel.add(buttonDelete);
         mainPanel.add(buttonExit);
         return mainPanel;
     }
@@ -41,5 +47,9 @@ public class ChooseCmdWindow extends AWindow {
 
     public JButton getButtonExit() {
         return buttonExit;
+    }
+
+    public JButton getButtonDelete() {
+        return buttonDelete;
     }
 }
