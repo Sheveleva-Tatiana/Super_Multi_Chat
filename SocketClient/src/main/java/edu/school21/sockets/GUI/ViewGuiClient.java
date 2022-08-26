@@ -250,11 +250,13 @@ public class ViewGuiClient {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
                         String toSendMessage = textFieldForTalk.getText();
-                        JSONObject messageJSON = JSONConverter.makeJSONObject(toSendMessage, "msg");
-                        assert messageJSON != null;
-                        messageToServer = messageJSON.toJSONString();
-                        textFieldForTalk.setText(null);
-                        writer.println(messageToServer);
+                        if (!toSendMessage.equals("")) {
+                            JSONObject messageJSON = JSONConverter.makeJSONObject(toSendMessage, "msg");
+                            assert messageJSON != null;
+                            messageToServer = messageJSON.toJSONString();
+                            textFieldForTalk.setText(null);
+                            writer.println(messageToServer);
+                        }
                     }
                 });
                 buttonToLeave.addActionListener(new AbstractAction() {
