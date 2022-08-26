@@ -36,6 +36,11 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public void deleteUser(String username) {
+        usersRepository.delete(username);
+    }
+
+    @Override
     public boolean signIn(String username, String password) {
         Optional<User> opt = usersRepository.findByUsername(username);
 

@@ -23,7 +23,6 @@ public class Server {
     private RoomsService roomsService;
     private ServerSocket serverSocket;
     private List<Client> clients = new ArrayList<>();
-    private List<String> rooms = new ArrayList<>();
 
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
@@ -108,7 +107,6 @@ public class Server {
         private Socket socket;
         private String username = "guest";
         private String roomTitle;
-        private String users;
         private String password;
 
         Client(Socket socket) {
@@ -177,6 +175,7 @@ public class Server {
                 usersService.signUp(new User(username, password));
                 System.out.println("User '" + username + "' was created.");
                 sendMsgToClient("User: " + username + " created!", "start");
+                username = "guest";
             } catch (Exception e) {
                 sendMsgToClient(e.getMessage(), "start");
             }
@@ -225,6 +224,9 @@ public class Server {
                             createRoom();
                         } else if ("answer2".equalsIgnoreCase(code)) {
                             chooseRoom();
+                        } else if ("answer3".equalsIgnoreCase(code)) {
+                            if(deleteUser())
+                                return;
                         } else if ("finishProgram".equals(code)) {
                             System.out.println("User: '" + username + "' logged out");
                             sendMsgToClient("Logout for " + username, "start");
@@ -239,7 +241,22 @@ public class Server {
             }
         }
 
-        private void createRoom() {
+    private boolean deleteUser() {
+        sendMsgToClient("Sure?", "sure");
+        String code = JSONConverter.parseToObject(reader.nextLine().trim()).getCODE();
+
+        if ("yes".equals(code)) {
+            usersService.deleteUser(username);
+            sendMsgToClient("Profile for user: " + username + " successfully deleted", "start");
+            System.out.println("User: '" + username + "' was deleted");
+            return true;
+        } else {
+            sendMsgToClient("Choose command: ", "choose command");
+        }
+        return false;
+    }
+
+    private void createRoom() {
             try {
                 sendMsgToClient("Enter Title for a new room", "enterTitleRoom");
                 JSONMessage messageJson = JSONConverter.parseToObject(reader.nextLine().trim());
@@ -250,10 +267,10 @@ public class Server {
                     return;
                 }
                 roomsService.createRoom(new Chatroom(roomTitle, username));
-                rooms.add(roomTitle);
                 System.out.println("User: '" + username + "' created a room: " + roomTitle);
                 sendMsgToClient("Room '" + roomTitle + "' created!", "choose command");
-            } catch (NoSuchElementException e) {
+            } catch (Exception e) {
+                sendMsgToClient("Room '" + roomTitle + "' already exist!", "choose command");
                 return;
             }
         }

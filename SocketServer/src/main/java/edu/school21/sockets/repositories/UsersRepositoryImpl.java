@@ -72,12 +72,12 @@ public class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
-    public void delete(Long id) {
-        String dlQuery = "DELETE FROM server.user WHERE id = ?";
-        int i = jdbcTemplate.update(dlQuery, id);
+    public void delete(String name) {
+        String dlQuery = "DELETE FROM server.user WHERE username = ?";
+        int i = jdbcTemplate.update(dlQuery, name);
 
         if (i == 0) {
-            System.err.println("User not found with id: " + id);
+            System.err.println("User not found with id: " + name);
         }
     }
 
@@ -90,4 +90,5 @@ public class UsersRepositoryImpl implements UsersRepository {
                 new BeanPropertyRowMapper<>(User.class)).stream().findAny().orElse(null);
         return Optional.ofNullable(user);
     }
+
 }

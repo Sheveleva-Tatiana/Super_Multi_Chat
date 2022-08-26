@@ -79,8 +79,9 @@ public class MessagesRepositoryImpl implements MessagesRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String name) {
     }
+
 
     @Override
     public List<Message> findAllByRoom(String roomTitle) {

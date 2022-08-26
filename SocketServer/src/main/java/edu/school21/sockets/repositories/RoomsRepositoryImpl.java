@@ -70,12 +70,12 @@ public class RoomsRepositoryImpl implements RoomsRepository {
     }
 
     @Override
-    public void delete(Long id) {
-        String dlQuery = "DELETE FROM server.rooms WHERE id = ?";
-        int i = jdbcTemplate.update(dlQuery, id);
+    public void delete(String title) {
+        String dlQuery = "DELETE FROM server.rooms WHERE title = ?";
+        int i = jdbcTemplate.update(dlQuery, title);
 
         if (i == 0) {
-            System.err.println("Room not found with id: " + id);
+            System.err.println("Room not found with title: " + title);
         }
     }
 
