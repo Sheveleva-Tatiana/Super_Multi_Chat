@@ -6,7 +6,7 @@
 > (в файле SocketServer/src/main/resources/db.properties указать актуальный db.user и db.password)
 
 ### 2. В папке SocketServer:
-> java -jar target/socket-server.jar --port=XXXX
+> java -jar target/socket-server.jar --port=XXXX (укажите необходимый номер порта)
 
 ### 3. В папке SocketClient:
 > java -jar target/socket-client.jar
