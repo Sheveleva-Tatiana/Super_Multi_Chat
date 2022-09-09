@@ -13,7 +13,7 @@
 
 
 
-Демонстрация работы чаты по ссылке https://youtu.be/u-wSoWaoalQ
+Демонстрация всей работы чата по ссылке https://youtu.be/u-wSoWaoalQ
 
 
 
