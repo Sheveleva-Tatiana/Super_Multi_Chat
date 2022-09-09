@@ -1,14 +1,15 @@
 # Super_Multi_Chat
 
-Для запуска необходимо:
+### Для запуска приложения необходимо:
 
-1. Запустить сервер на PostgreSQL (в файле SocketServer/src/main/resources/db.properties указать актуальный db.user и db.password)
+### 1. Запустить сервер на PostgreSQL 
+> (в файле SocketServer/src/main/resources/db.properties указать актуальный db.user и db.password)
 
-2. В папке SocketServer:
-java -jar target/socket-server.jar --port=XXXX
+### 2. В папке SocketServer:
+> java -jar target/socket-server.jar --port=XXXX
 
-3. В папке SocketClient:
-java -jar target/socket-client.jar
+### 3. В папке SocketClient:
+> java -jar target/socket-client.jar
 
 
 
